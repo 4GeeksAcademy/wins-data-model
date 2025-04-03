@@ -13,8 +13,6 @@ class User(db.Model):
     lastname = Column(String(50))
     email = Column(String(50), unique=True)
 
-    following = relationship(
-        "Follower", foreign_keys="[Follower.user_from_id]", back_populates="follower")
     comments = relationship("Comment", back_populates="author")
 
     def serialize(self):
@@ -34,7 +32,7 @@ class Comment(db.Model):
     author_id = Column(Integer, ForeignKey("user.id"))
     post_id = Column(Integer, ForeignKey("post.id"))
 
-    author = relationship("User", back_populates="author_id")
+    author = relationship("User", back_populates="comments")
 
     def serialize(self):
         return {
