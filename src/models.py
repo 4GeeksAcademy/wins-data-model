@@ -14,6 +14,9 @@ class User(db.Model):
     email = Column(String(50), unique=True)
 
     comments = relationship("Comment", back_populates="author")
+    post = relationship("Post", back_populates="user")
+    follower_id = relationship("Follower", back_populates="user_id")
+    follower_to_id = relationship("Follower", back_populates="users_id")
 
     def serialize(self):
         return {
@@ -33,6 +36,8 @@ class Comment(db.Model):
     post_id = Column(Integer, ForeignKey("post.id"))
 
     author = relationship("User", back_populates="comments")
+    post_id_relationship = relationship(
+        "Post", back_populates="post_relationship")
 
     def serialize(self):
         return {
@@ -47,6 +52,10 @@ class Post(db.Model):
     __tablename__ = "post"
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("user.id"))
+
+    user = relationship("User", back_populates="post")
+    post_relationship = relationship(
+        "Comment", back_populates="post_id_relationship")
 
     def serialize(self):
         return {
@@ -76,6 +85,9 @@ class Follower(db.Model):
     id = Column(Integer, primary_key=True)
     user_from_id = Column(Integer, ForeignKey("user.id"))
     user_to_id = Column(Integer, ForeignKey("user.id"))
+
+    user_id = relationship("User", back_populates="follower_id")
+    users_id = relationship("User", back_populates="follower_to_id")
 
     def serialize(self):
         return {
